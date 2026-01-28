@@ -5,7 +5,9 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.get("/", (req, res) => {
+  res.send("AI Proxy is alive.");
+});
 app.post("/hf", async (req, res) => {
   const userMessage = req.body.message;
 

@@ -14,7 +14,7 @@ app.post("/hf", async (req, res) => {
 
     try {
         const hfResponse = await fetch(
-            "https://api-inference.huggingface.co/models/bigscience/bloomz-560m",
+            "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
             {
                 method: "POST",
                 headers: {

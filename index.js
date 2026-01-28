@@ -1,39 +1,35 @@
-import express from "express";
-import fetch from "node-fetch";
-import cors from "cors";
-import dotenv from "dotenv";
-
-dotenv.config();
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
 
 const app = express();
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
 
 app.post("/hf", async (req, res) => {
-    const userMessage = req.body.message;
+  const userMessage = req.body.message;
 
-    try {
-        const hfResponse = await fetch(
-            "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
-            {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${process.env.HF_KEY}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ inputs: userMessage })
-            }
-        );
+  try {
+    const response = await axios.post(
+      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
+      {
+        inputs: `You are a friendly AI. ${userMessage}`
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.HF_KEY}`
+        }
+      }
+    );
 
-        const data = await hfResponse.json();
-
-        res.json({
-            text: data[0]?.generated_text || "No response."
-        });
-
-    } catch (err) {
-        res.json({ text: "Server error." });
-    }
+    const output = response.data[0]?.generated_text || "No response.";
+    res.json({ text: output });
+  } catch (err) {
+    console.error("HF error:", err.message);
+    res.json({ text: "No response." });
+  }
 });
 
-app.listen(3000, () => console.log("Server running"));
+app.listen(3000, () => {
+  console.log("Server running");
+});
